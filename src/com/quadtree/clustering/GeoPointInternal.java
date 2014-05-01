@@ -25,6 +25,11 @@ public class GeoPointInternal implements IGeoPoint {
         return y;
     }
 
+    public void move(int lat, int lng) {
+        y = lat;
+        x = lng;
+    }
+
     @Override
     public String toString() {
         return String.format("(%d,%d)", x, y);

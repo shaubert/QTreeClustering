@@ -122,8 +122,6 @@ public class QTNode {
      * Splits current node into four subnodes
      */
     private void split() {
-//        int cX = (int) (avgX / count);
-//        int cY = (int) (avgY / count);
         int cX = (boundBox.tR.x + boundBox.bL.x) / 2;
         int cY = (boundBox.tR.y + boundBox.bL.y) / 2;
         split(cX, cY);
@@ -164,8 +162,6 @@ public class QTNode {
         }
         count = points.size();
 
-        //if (points.size() > MAX_POINTS/* && boundBox.tR.x - boundBox.bL.x > MIN_COORD_SPAN
-        //                              && boundBox.tR.y - boundBox.bL.y > MIN_COORD_SPAN*/) {
         updateCluster();
         if (points.size() > MAX_POINTS
                 && (boundBox.getLatSpan() > MIN_COORD_SPAN ||
@@ -252,16 +248,10 @@ public class QTNode {
             buffer.clear();
         }
 
-//        if (BuildConfig.DEBUG) {
-//            Log.d(TAG, "search res for " + range + ":\n" + result);
-//        }
         List<IGeoPoint> res = new ArrayList<IGeoPoint>();
         for (QTNode node : result) {
             res.addAll(node.getSuccessors(range));
         }
-//        if (BuildConfig.DEBUG) {
-//            Log.d(TAG, "final res for " + range + ":\n" + result);
-//        }
 
         return res;
     }
@@ -300,12 +290,14 @@ public class QTNode {
 
     private void updateCluster() {
         if (count > 0) {
-            this.cluster = new GeoCluster((int) (avgX / count), (int) (avgY / count),
-                    Collections.unmodifiableCollection(points));
+            int lat = (int) (avgY / count);
+            int lng = (int) (avgX / count);
+            if (cluster == null) {
+                cluster = new GeoCluster(lng, lat, Collections.unmodifiableCollection(points));
+            } else {
+                cluster.move(lat, lng);
+            }
         }
-//        int cX = (boundBox.tR.x + boundBox.bL.x) / 2;
-//        int cY = (boundBox.tR.y + boundBox.bL.y) / 2;
-//        return new GeoCluster(cX, cY, count);
     }
 
     @Override
